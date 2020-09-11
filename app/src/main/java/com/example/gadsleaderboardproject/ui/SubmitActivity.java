@@ -72,27 +72,27 @@ public class SubmitActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SubmitActivity.this.projectSumit(mFirstName, mLastName, mEmaildress, mGitHubLink);
+                projectSumit();
 
             }
         });
     }
 
-    private void projectSumit(EditText firstName, EditText lastName, final EditText emaildress, EditText gitHubLink) {
+    private void projectSumit() {
         final SubmitModel projectSubmit = new SubmitModel();
-        final String firs_name = firstName.getText().toString();
-        final String last_name = lastName.getText().toString();
-        final String email = emaildress.getText().toString();
-        final String github = gitHubLink.getText().toString();
+        final String firs_name = mFirstName.getText().toString();
+        final String last_name = mLastName.getText().toString();
+        final String email = mEmaildress.getText().toString();
+        final String github = mGitHubLink.getText().toString();
 
         if (TextUtils.isEmpty(firs_name)) {
-            firstName.setError("Required");
+            mFirstName.setError("Required");
         } else if (TextUtils.isEmpty(last_name)) {
-            lastName.setError("Required");
+            mLastName.setError("Required");
         } else if (TextUtils.isEmpty(email)) {
-            emaildress.setError("Required");
+            mEmaildress.setError("Required");
         } else if (TextUtils.isEmpty(github)) {
-            gitHubLink.setError("Required");
+            mGitHubLink.setError("Required");
         } else {
             openDialog(R.layout.confirm_dialog);
 
@@ -108,6 +108,7 @@ public class SubmitActivity extends AppCompatActivity {
             sure.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mDialog.dismiss();
                     Submit.SubmitService
                             .submitProject(firs_name, last_name, email, github)
                             .enqueue(new Callback<Void>() {
