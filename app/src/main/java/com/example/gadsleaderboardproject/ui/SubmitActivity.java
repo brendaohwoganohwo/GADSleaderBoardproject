@@ -20,9 +20,8 @@ import com.example.gadsleaderboardproject.R;
 import com.example.gadsleaderboardproject.apis.LeaderBoardService;
 import com.example.gadsleaderboardproject.models.LearnersModel;
 import com.example.gadsleaderboardproject.models.SubmitModel;
-import com.example.gadsleaderboardproject.repository.Submit;
+import com.example.gadsleaderboardproject.repository.SubmitRepo;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-
 
 import java.util.List;
 
@@ -30,8 +29,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.example.gadsleaderboardproject.repository.Submit.SubmitService.submitProject;
 
 public class SubmitActivity extends AppCompatActivity {
 
@@ -72,20 +69,20 @@ public class SubmitActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                projectSumit();
+                SubmitActivity.this.projectSumit();
 
             }
         });
     }
 
     private void projectSumit() {
-        final SubmitModel projectSubmit = new SubmitModel();
-        final String firs_name = mFirstName.getText().toString();
-        final String last_name = mLastName.getText().toString();
-        final String email = mEmaildress.getText().toString();
-        final String github = mGitHubLink.getText().toString();
+        SubmitModel projectSubmit = new SubmitModel();
+        String firs_name = mFirstName.getText().toString();
+        String last_name = mLastName.getText().toString();
+        String email = mEmaildress.getText().toString();
+        String github = mGitHubLink.getText().toString();
 
-        if (TextUtils.isEmpty(firs_name)) {
+        if (TextUtils.isEmpty(firs_name) && firs_name.length() < 2) {
             mFirstName.setError("Required");
         } else if (TextUtils.isEmpty(last_name)) {
             mLastName.setError("Required");
@@ -105,35 +102,33 @@ public class SubmitActivity extends AppCompatActivity {
             ImageView cancel = mDialog.findViewById(R.id.cancel_submission);
 
             assert sure != null;
-            sure.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mDialog.dismiss();
-                    Submit.SubmitService
-                            .submitProject(firs_name, last_name, email, github)
-                            .enqueue(new Callback<Void>() {
-                                @Override
-                                public void onResponse(Call<Void> call, Response<Void> response) {
-                                    if (response.isSuccessful()) {
-                                        openDialog(R.layout.success_dialog);
-                                        Log.d(TAG, response.message());
-                                        mFirstName.setText("");
-                                        mLastName.setText("");
-                                        mEmaildress.setText("");
-                                        mGitHubLink.setText("");
-                                    } else {
-                                        openDialog(R.layout.failure_dialog);
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<Void> call, Throwable t) {
+            sure.setOnClickListener(v -> {
+                mDialog.dismiss();
+                SubmitRepo.Submit
+                        .submitProject(email, firs_name, last_name, github)
+                        .enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+                                if (!response.isSuccessful()) {
                                     openDialog(R.layout.failure_dialog);
-                                    Log.d(TAG, t.getMessage(), t);
+                                    Log.d(TAG, response.message());
+                                } else {
+                                    openDialog(R.layout.success_dialog);
+                                    mFirstName.setText("");
+                                    mLastName.setText("");
+                                    mEmaildress.setText("");
+                                    mGitHubLink.setText("");
                                 }
 
-                            });
-                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+                                openDialog(R.layout.failure_dialog);
+                                Log.d(TAG, t.getMessage(), t);
+                            }
+
+                        });
             });
             assert cancel != null;
             cancel.setOnClickListener(new View.OnClickListener() {

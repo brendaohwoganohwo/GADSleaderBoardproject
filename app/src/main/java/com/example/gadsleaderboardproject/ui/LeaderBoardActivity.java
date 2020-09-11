@@ -12,7 +12,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.gadsleaderboardproject.R;
 import com.example.gadsleaderboardproject.ui.ui.main.SectionsPagerAdapter;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
