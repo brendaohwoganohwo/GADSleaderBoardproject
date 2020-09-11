@@ -33,7 +33,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<LeaderBoardAdapter.
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.leaner_model, parent, false);
+                .inflate(R.layout.learner_model, parent, false);
 
         return new ViewHolder(itemView, mOnDetailsListener);
     }
